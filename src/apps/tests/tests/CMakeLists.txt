@@ -56,6 +56,7 @@ cmc_cpp_all_warnings_as_errors(${TARGET_NAME} ENABLED ${BUILD_CONF_WarningAsErro
 
 cmc_cpp_sanitizer(${TARGET_NAME} ${BUILD_CONF_Sanitizer})
 
+add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 
 ##
 ## Install

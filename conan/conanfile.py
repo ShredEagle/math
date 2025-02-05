@@ -1,8 +1,10 @@
-from conans import ConanFile, tools
-from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
+from conan import ConanFile
+from conan.tools.build import can_run, check_min_cppstd
+from conan.tools.cmake import CMake, cmake_layout
+from conan.tools.files import copy, update_conandata
+from conan.tools.scm import Git
 
-
-from os import path
+import os
 
 
 class MathConan(ConanFile):
@@ -15,19 +17,57 @@ class MathConan(ConanFile):
     url = "https://github.com/Adnn/math"
     description = "A mathematic library implementation, first concentrating on linear algrebra."
     topics = ("math", "linear algebra", "geometry", "graphics",)
+
     settings = ("os", "compiler", "build_type", "arch")
-    options = {
-        "shared": [True, False],
-        "build_tests": [True, False],
-    }
-    default_options = {
-        "shared": False,
-        "build_tests": False,
-    }
+    options = {}
+    default_options = {}
 
-    build_policy = "missing"
     generators = "CMakeDeps", "CMakeToolchain"
+    revision_mode = "scm"
 
 
-    python_requires="shred_conan_base/0.0.5@adnn/stable"
-    python_requires_extend="shred_conan_base.ShredBaseConanFile"
+    def validate(self):
+        if self.settings.compiler.get_safe("cppstd"):
+            check_min_cppstd(self, "20")
+
+
+    # Handled at the profile level for the moment
+    #def tool_requires(self):
+    #    self.tool_requires("cmake/[>=3.31]")
+
+
+    def layout(self):
+        # The root of the project is one level above
+        self.folders.root = ".."
+        cmake_layout(self)
+
+
+    def export(self):
+        git = Git(self, self.recipe_folder)
+        # Save the url and commit in conandata.yml
+        # Unsafe atm since it is missing the repository argument,
+        # so we save the coordinates manually
+        #git.coordinates_to_conandata()
+        url, commit = git.get_url_and_commit(repository=True)
+        update_conandata(self, {"scm": {"url": url, "commit": commit}})
+
+
+    def source(self):
+        # we recover the saved url and commit from conandata.yml and use them to get sources
+        git = Git(self)
+        git.checkout_from_conandata_coordinates()
+        git.run("submodule update --init")
+
+
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
+        if can_run(self):
+            cmake.test()
+
+
+    def package(self):
+        cmake = CMake(self)
+        cmake.install()
+        copy(self, "LICENSE", src=self.source_folder, dst=os.path.join(self.package_folder, "licenses"))

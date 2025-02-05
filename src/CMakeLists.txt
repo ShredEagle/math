@@ -1,6 +1,5 @@
 add_subdirectory(libs/math/math)
 
-option(BUILD_tests "Build the test applications" ON)
-if(BUILD_tests)
+if(BUILD_TESTING)
     add_subdirectory(apps/tests/tests)
 endif()
