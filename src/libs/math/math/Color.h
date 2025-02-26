@@ -301,20 +301,40 @@ hdr::Rgba<T_hdrNumber> to_hdr(sdr::Rgba aSdr)
 }
 
 
-// Will not be constexpr until c++26 because of std::pow...
+// Encode/decode will not be constexpr until c++26 because of std::pow...
+// see: https://en.wikipedia.org/wiki/SRGB#Transfer_function_(%22gamma%22)
+
+/// \brief Decoding from sRGB to linear-light intensity, or gamma decompression.
 template <class T_number>
     requires std::is_floating_point_v<T_number>
 constexpr T_number decode_sRGBChannel(T_number aValue)
 {
     if(aValue <= T_number{0.04045})
     {
-        return aValue/T_number{12.92};
+        return aValue / T_number{12.92};
     }
     else
     {
         return std::pow((aValue + T_number{0.055}) / T_number{1.055}, T_number{2.4});
     }
 }
+
+
+/// \brief Encoding from linear-light intensity to sRGB, or gamma compression.
+template <class T_number>
+    requires std::is_floating_point_v<T_number>
+constexpr T_number encode_sRGBChannel(T_number aValue)
+{
+    if(aValue <= T_number{0.0031308})
+    {
+        return aValue * T_number{12.92};
+    }
+    else
+    {
+        return std::pow(aValue, T_number{1} / T_number{2.4}) * T_number{1.055} - T_number{0.055};
+    }
+}
+
 
 
 template <class T_number>
@@ -352,6 +372,45 @@ inline sdr::Rgba decode_sRGB(sdr::Rgba aSdr)
 {
     auto floating = to_hdr<float>(aSdr);
     floating = decode_sRGB(floating);
+    return to_sdr(floating);
+}
+
+
+template <class T_number>
+constexpr hdr::Rgb<T_number> encode_sRGB(hdr::Rgb<T_number> aHdr)
+{
+    return {
+        encode_sRGBChannel(aHdr.r()),
+        encode_sRGBChannel(aHdr.g()),
+        encode_sRGBChannel(aHdr.b()),
+    };
+}
+
+
+template <class T_number>
+constexpr hdr::Rgba<T_number> encode_sRGB(hdr::Rgba<T_number> aHdr)
+{
+    return {
+        encode_sRGBChannel(aHdr.r()),
+        encode_sRGBChannel(aHdr.g()),
+        encode_sRGBChannel(aHdr.b()),
+        aHdr.a(),
+    };
+}
+
+
+inline sdr::Rgb encode_sRGB(sdr::Rgb aSdr)
+{
+    auto floating = to_hdr<float>(aSdr);
+    floating = encode_sRGB(floating);
+    return to_sdr(floating);
+}
+
+
+inline sdr::Rgba encode_sRGB(sdr::Rgba aSdr)
+{
+    auto floating = to_hdr<float>(aSdr);
+    floating = encode_sRGB(floating);
     return to_sdr(floating);
 }
 
