@@ -1,5 +1,9 @@
 #pragma once
 
+
+#include <cassert>
+
+
 namespace ad {
 namespace math {
 
@@ -103,7 +107,7 @@ constexpr T_number Quaternion<T_number>::w() const noexcept(should_noexcept)
 
 
 template <class T_number>
-constexpr Quaternion<T_number> Quaternion<T_number>::operator-() 
+constexpr Quaternion<T_number> Quaternion<T_number>::operator-()
 const noexcept(should_noexcept)
 {
     return {-mVector, -mW};
@@ -111,7 +115,7 @@ const noexcept(should_noexcept)
 
 
 template <class T_number>
-constexpr Quaternion<T_number> & Quaternion<T_number>::operator*=(const Quaternion & aRhs) 
+constexpr Quaternion<T_number> & Quaternion<T_number>::operator*=(const Quaternion & aRhs)
 noexcept(should_noexcept)
 {
     T_number w = mW * aRhs.mW - mVector.dot(aRhs.mVector);
@@ -132,12 +136,12 @@ template <class T_number>
 constexpr Quaternion<T_number> Quaternion<T_number>::inverse() const noexcept(should_noexcept)
 {
     // IMPORTANT This is true only because we expect Quaternion to be a unit quaternion.
-    return conjugate(); 
+    return conjugate();
 }
 
 
 template <class T_number>
-template <class T_derived> 
+template <class T_derived>
 //requires (is_position_v<T_derived> || is_vec_v<T_derived>)
 T_derived Quaternion<T_number>::rotate(const Vector<T_derived, 3, T_number> & aVector) const
 noexcept(should_noexcept)
@@ -148,7 +152,7 @@ noexcept(should_noexcept)
 
 
 template <class T_number>
-constexpr LinearMatrix<3, 3, T_number> Quaternion<T_number>::toRotationMatrix() const 
+constexpr LinearMatrix<3, 3, T_number> Quaternion<T_number>::toRotationMatrix() const
 noexcept(should_noexcept)
 {
     return {
@@ -161,17 +165,17 @@ noexcept(should_noexcept)
 
 
 template <class T_number>
-constexpr bool 
+constexpr bool
 Quaternion<T_number>::equalsWithinTolerance(const Quaternion & aRhs, T_number aEpsilon) const
 noexcept(should_noexcept)
 {
-    return mVector.equalsWithinTolerance(aRhs.mVector, aEpsilon) 
+    return mVector.equalsWithinTolerance(aRhs.mVector, aEpsilon)
         && std::abs(mW - aRhs.mW) <= aEpsilon;
 }
 
 
 template <class T_number>
-constexpr Vec<4, T_number> Quaternion<T_number>::asVec() const 
+constexpr Vec<4, T_number> Quaternion<T_number>::asVec() const
 noexcept(should_noexcept)
 {
     return {mVector, mW};
@@ -183,7 +187,7 @@ noexcept(should_noexcept)
 //
 template <class T_number>
 constexpr Quaternion<T_number>
-operator*(Quaternion<T_number> aLhs, const Quaternion<T_number> & aRhs) 
+operator*(Quaternion<T_number> aLhs, const Quaternion<T_number> & aRhs)
 noexcept(decltype(aLhs)::should_noexcept)
 {
     return aLhs *= aRhs;
@@ -192,7 +196,7 @@ noexcept(decltype(aLhs)::should_noexcept)
 
 template <class T_number>
 constexpr Quaternion<T_number>
-difference(Quaternion<T_number> aLhs, const Quaternion<T_number> & aRhs) 
+difference(Quaternion<T_number> aLhs, const Quaternion<T_number> & aRhs)
 noexcept(decltype(aLhs)::should_noexcept)
 {
     return aRhs * aLhs.inverse();
@@ -210,10 +214,10 @@ noexcept(decltype(aLhs)::should_noexcept)
 template <class T_number>
 std::ostream & operator<<(std::ostream & aOut, const Quaternion<T_number> & aQuaternion)
 {
-    return aOut << "<q>{" 
+    return aOut << "<q>{"
         << aQuaternion.x() << ", "
         << aQuaternion.y() << ", "
-        << aQuaternion.z() << ", " 
+        << aQuaternion.z() << ", "
         << aQuaternion.w()
         << "}"
         ;
@@ -231,7 +235,7 @@ Quaternion<T_number> toQuaternion(const LinearMatrix<3, 3, T_number> & m)
         m.at(2, 2) - m.at(0, 0) - m.at(1, 1),
     }};
 
-    auto maxElementIt = 
+    auto maxElementIt =
         std::max_element(std::begin(fourTimesSquaredMinusOne),
                          std::end(fourTimesSquaredMinusOne));
 
