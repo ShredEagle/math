@@ -31,9 +31,10 @@ class MathConan(ConanFile):
             check_min_cppstd(self, "20")
 
 
-    # Handled at the profile level for the moment
-    #def tool_requires(self):
-    #    self.tool_requires("cmake/[>=3.31]")
+    # Note: We expect the profile to require it in a specific version
+    # but having it here makes it simpler for external users.
+    def build_requirements(self):
+        self.tool_requires("cmake/[>=3.23]")
 
 
     def layout(self):
