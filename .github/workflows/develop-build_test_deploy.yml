@@ -11,6 +11,9 @@ jobs:
     #uses: shredeagle/reusable-workflows/.github/workflows/main_build.yml@v2.7.0
     uses: shredeagle/reusable-workflows/.github/workflows/main_build.yml@topic/math#34-migration_conan2
     with:
+      # Add macos
+      os: >-
+        ["ubuntu-24.04", "windows-2022", "macos-13"]
       deployrecipe_user: adnn
       step_conancache: false
     secrets:
