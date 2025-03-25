@@ -8,13 +8,10 @@ on:
 
 jobs:
   build-test-deployrecipe:
-    uses: shredeagle/reusable-workflows/.github/workflows/main_build.yml@v2.7.0
+    #uses: shredeagle/reusable-workflows/.github/workflows/main_build.yml@v2.7.0
+    uses: shredeagle/reusable-workflows/.github/workflows/main_build.yml@topic/math#34-migration_conan2
     with:
-      # Disable macOS
-      # apple-clang 13 is being a little itch with deduction guides for template aliases.
-      os: >-
-        ["ubuntu-24.04", "windows-2022"]
-      deployrecipe_userchannel: adnn/develop
+      deployrecipe_user: adnn
       step_conancache: false
     secrets:
       SHREDROBOT_GITHUB_TOKEN: ${{ secrets.SHREDROBOT_GITHUB_TOKEN }}

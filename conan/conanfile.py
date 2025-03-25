@@ -54,7 +54,7 @@ class MathConan(ConanFile):
 
 
     def source(self):
-        # we recover the saved url and commit from conandata.yml and use them to get sources
+        # recover the url and commit from conandata.yml, use them to get sources
         git = Git(self)
         git.checkout_from_conandata_coordinates()
         git.run("submodule update --init")
