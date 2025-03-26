@@ -21,10 +21,8 @@ and interpolation.
 
 ## Build System and Dependencies
 
-The project uses CMake for its build scripts,
-which is sufficient for building the project.
+The project uses CMake for its build scripts, which is sufficient for building the project.
 However, CMake does not manage upstream dependencies.
 
 To address this, a Conan recipe is provided on top of the CMake scripts.
-It handles dependency management and facilitates the integration
-inside a dependency graph.
+It handles dependency management and facilitates the integration inside a dependency graph.
