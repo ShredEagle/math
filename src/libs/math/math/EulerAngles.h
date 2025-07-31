@@ -122,12 +122,12 @@ template <class T_number, template <class> class TT_angle>
 Quaternion<T_number> toQuaternion(EulerAngles<T_number, TT_angle> aEuler)
 {
     // Abbreviations for the various angular functions
-    T_number cr = cos(aEuler.x  * 0.5f);
-    T_number sr = sin(aEuler.x  * 0.5f);
+    T_number cr = cos(aEuler.x * 0.5f);
+    T_number sr = sin(aEuler.x * 0.5f);
     T_number cp = cos(aEuler.y * 0.5f);
     T_number sp = sin(aEuler.y * 0.5f);
-    T_number cy = cos(aEuler.z   * 0.5f);
-    T_number sy = sin(aEuler.z   * 0.5f);
+    T_number cy = cos(aEuler.z * 0.5f);
+    T_number sy = sin(aEuler.z * 0.5f);
 
     Vec<4, T_number> v{
         sr * cp * cy - cr * sp * sy,
